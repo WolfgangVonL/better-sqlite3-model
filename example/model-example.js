@@ -9,13 +9,13 @@ class Test extends Model {
 	static get jsonSchema () {
 	    return {
 	      	type: 'test',
-	      	required: ['name'],
+	      	required: ['name'], // for best results add unique fields to required list
 	      	index: ['name'],  // for best results index required fields
 	      	json: ['data' , 'arrayData'],
 		    properties: {
 		        name: {type: 'string' , unique: true , allowNull: false},
-		        data: {type: 'object' , unique: true , allowNull: false}, 
-		        arrayData: {type: 'object' , unique: true , allowNull: false}, 
+		        data: {type: 'object'}, 
+		        arrayData: {type: 'object'}, 
 		        /*     Relationship definitions
 		        manyHasMany: {
 		        	from: this.tableName,
@@ -30,9 +30,11 @@ class Test extends Model {
 		        	to: 'onetoonetest'
 		        },
 		        */
-		        hasOne: {
-		        	from: this.tableName,
-		        	to: 'test'
+		        test: {    // this is a hasOne relationship with the Test class. 
+		        		   // key must match 'from'
+		        	hasOne: {
+		        		from: 'test'
+		        	}
 		        }
 	      	}
 	    }

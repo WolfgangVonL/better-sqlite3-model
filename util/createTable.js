@@ -1,11 +1,16 @@
 const _createRelationship = require('../relations.js').create
 const _connectionFactory = require('../connect.js')
+const _injectIdentifiers = require('./injectIdentifiers.js')
 const _createTableFactory = (model , props) => {
 	var j = []
 	var rel = []
+	
 	props = _injectIdentifiers(props)
 	for(var i in props) {
 		var p = props[i]
+		
+		
+		
 		if(i == 'manyHasMany') {
 			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
 			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
@@ -28,23 +33,28 @@ const _createTableFactory = (model , props) => {
 			rel.push(rels)
 			continue
 		}
+		if(p.hasOne) {
+			
+			d = i+' text , foreign key ('+i+') references '+p.hasOne.from+'(uuid)'
+			j.push(d)
+			_createRelationship(model , p.hasOne.from , {hasOne:true})
+			continue
+		}
 		var d = ''
 		d += i
-		p.type ? d += ' '+p.type : d += ' string'
+		p.type == 'string' ? d += ' text' : d += ' '+p.type
 		p.primary ? d += ' primary key' : null
 		p.increment ? d += ' autoincrement' : null
 		p.unique ? d += ' unique': null
 		p.allowNull === false ? d += ' not null' : null
-		if(p.hasOne) {
-			_createRelationship(model , p.from , {hasOne:true})
-			d += ' , foreign key '+i+' references '+p.from+'(uuid)'
-		}
 		j.push(d)
 	}
 	var sql = 'create table if not exists '+model+' ( '+j.join(' , ')+' )'
+	
+	
+	
 	_connectionFactory().exec(sql)
 	rel.map(r => _connectionFactory().exec(r) )
-
 }
 
 module.exports = _createTableFactory

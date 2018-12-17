@@ -1,12 +1,12 @@
 const _injectIdentifiers = props => {
-	return {
+	const n = {
 		id: {type: 'integer' , primary: true , increment: true},
 		uuid: {type: 'string' , unique: true , allowNull: false},
-		props,
 		createdAt: {type: 'string'},
 		lastUpdated: {type: 'string'}
-
 	}
+	for(var i in props) { n[i] = props[i] }
+	return n
 }
 
 module.exports = _injectIdentifiers

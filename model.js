@@ -21,18 +21,21 @@ const _stripRelations = require('./relations.js').strip
 const _loadRelations = require('./relations.js').graph
 const _linkModels = require('./relations.js').link
 const _unlinkModels = require('./relations.js').unlink
+const _saveChildren = require('./relations.js').saveChildren
 const _walk = require('./util/walk.js')
 
 var __models = {}
 var __tables = {}
 
+var __dollarSignCalls = []
 
 class Model {
 	constructor(props) {
+		
 		if(this.constructor.name === 'Model') {
 			throw Error('Model must be extended to use')
 		}
-		this.$
+		
 		if(props) {
 			for(var i in props) {
 				this[i] = props[i]
@@ -40,18 +43,18 @@ class Model {
 		}
 		this.$preLoad
 	}
-	get $() {
-		_init(this.constructor)	
-	}
 	get $preCheckout() {
+		
 		this.uuid = uuid()
 		if(!this.createdAt) {
 			this.createdAt = Date.now()
 		}
 		this.lastUpdated = Date.now()
+		this.$loadChildren
 		return this
 	}
 	get $preLoad() {
+		
 		var model = this.constructor
 		var schema = model.jsonSchema
 		if(schema.json) {
@@ -62,12 +65,16 @@ class Model {
 			})
 		}
 		this.lastUpdated = Date.now()
-		this.$loadChildren()
+		this.$loadChildren
 	}
 	get $preInsert() {
-		var model = this.constructor
-		var schema = model.jsonSchema
+		
+		var schema = this.constructor.jsonSchema
+		_saveChildren(this)
 		var dis = _disassociateObject(this)
+		
+		
+		
 		_checkRequired(schema , dis)
 		_trimFromSchema(schema , dis)
 		_checkType(schema , dis)
@@ -78,16 +85,33 @@ class Model {
 				}
 			})
 		}
-		return _stripRelations(dis)
+		return _stripRelations(this.constructor.tableName , dis)
 	}
 	get $preUpdate() {
-		var model = this.constructor
-		var schema = model.jsonSchema
+		
+		var schema = this.constructor.jsonSchema
+		_saveChildren(this)
 		var dis = _disassociateObject(this)
+		
+		
+		
 		_checkRequired(schema , dis)
+		
+		
+		
 		_trimFromSchema(schema , dis)
+		
+		
+		
 		_checkType(schema , dis)
+		
+		
+		
 		_moveUuidToBack(dis)
+		
+		
+		
+
 		if(schema.json) {
 			schema.json.map(p => {
 				if(dis[p]) {
@@ -95,14 +119,27 @@ class Model {
 				}
 			})
 		}
+		
+		
+		
 		this.lastUpdated = Date.now()
-		return _stripRelations(dis)
+
+		dis = _stripRelations(this.constructor.tableName ,  dis)
+		
+		
+		
+		return dis
 	}
 	get $preRemove() {
+		
 		return {uuid: this.uuid}
 	}
 	get $loadChildren() {
+		
 		var relg = _loadRelations(this)
+		
+		
+		
 		//Process relationship graph
 		var model = this.constructor
 		if(Object.keys(relg.manyHasMany).length > 0) {
@@ -150,47 +187,62 @@ class Model {
 		}
 	}
 	set link(child) {
+		
 		_linkModels(this,child)
-		this.$loadChildren()
+		this.save
+		this.$loadChildren
 		this.lastUpdated = Date.now()
 	}
 	set unlink(child) {
+		
 		_unlinkModels(this,child)
-		this.$loadChildren()
+		this.save
+		this.$loadChildren
 		this.lastUpdated = Date.now()
 	}
 	get save() {
-		var model = this.constructor
-		Model.save(model,this)
+		
+		this.$loadChildren
+		
+		
 		this.lastUpdated = Date.now()
+		this.constructor.save(this)
 	}
 	get remove() {
-		var model = this.constructor
-		Model.remove(model,this)
+		
+		this.constructor.remove(this)
 	}
 	static get $() {
-		if(!__models[this.name]) {
-			__models[this.name] = this
-			__tables[this.tableName] = this
+		if(this.name == 'Model') {
+			throw Error('You must extend Model to use dollar sign')
 		}
+		if(__dollarSignCalls.includes(this.name)) {
+			return
+		}
+		__models[this.name] = this
+		__tables[this.tableName] = this
+		__dollarSignCalls.push(this.name)
 		_init(this)	
 	}
-	static find(sel) {
-		this.$
-		if(this.name == 'Model') {
-			throw Error('You must extend Model to use find. Use findOne , findAll , or findEach instead')
-		}
-		return this.findOne(this.tableName , sel)
-	}
 	static dispense(props) {
-		this.$
+		
 		if(this.name == 'Model') {
 			throw Error('You must extend Model to use dispense. Use checkout instead')
 		}
 		return this.checkout(this.tableName , props)
 	}
+	static find(sel) {
+		
+		if(this.name == 'Model') {
+			throw Error('You must extend Model to use find. Use findOne , findAll , or findEach instead')
+		}
+		console.log('debug model find findone results')
+		console.log(this.findOne(this.tableName , sel))
+		console.log()
+		return this.findOne(this.tableName , sel)
+	}
 	static create(obj) {
-		this.$
+		
 		if(this.name == 'Model') {
 			throw Error('You must extend Model to use create. Use createOne or createAll instead')
 		}
@@ -199,7 +251,6 @@ class Model {
 		if(obj.postInsert) obj.postInsert()
 	}
 	static save(obj) {
-		this.$
 		if(this.name == 'Model') {
 			throw Error('You must extend Model to use save. Use updateOne or updateAll instead')
 		}
@@ -209,7 +260,7 @@ class Model {
 		if(obj.postUpdate) obj.postUpdate()
 	}
 	static remove(obj) {
-		this.$
+		
 		if(this.name == 'Model') {
 			throw Error('You must extend Model to use remove. Use removeOne or removeAll instead')
 		}
@@ -221,26 +272,31 @@ class Model {
 
 
 	static checkout(model , props) {
-		this.$
-		if(!__models[model]) {
-			throw Error('Caanot checkout: cannot lookup model name')
+		
+		if(!__tables[model]) {
+			throw Error('Cannot checkout '+model+': cannot lookup model name ')
 		}
-		var obj = new __models[model](props)
+		var obj = new __tables[model](props)
 		if(obj.preCheckout) obj.preCheckout()
-		return _injectEmptySchema(model , obj.$preCheckout)
+		return _injectEmptySchema(__tables[model] , obj.$preCheckout)
 	}
 	static findOne(model,props) {
-		this.$
+		console.log('debug model findone results')
+		console.log(_connectionFactory().prepare('select * from '+model+_selectorFactory(props)).get())
+		console.log()
+		console.log('debug model findone sql')
+		console.log('select * from '+model+_selectorFactory(props))
+		console.log()
 		return new this(_connectionFactory().prepare('select * from '+model+_selectorFactory(props)).get())
 	}
 	static findAll(model,props) {
-		this.$
+		
 		return _connectionFactory().prepare('select * from '+model+_selectorFactory(props)).all().map(o => {
 			return new this(o)
 		})
 	}
 	static findEach(model,props,cb,chunksize = false) {
-		this.$
+		
 		var stmt = _connectionFactory().prepare('select * from '+model+_selectorFactory(props))
 		for(const row of stmt.iterate()) {
 			if(chunksize) { 
@@ -257,28 +313,26 @@ class Model {
 		if(chunksize && chunks.length > 0) cb(new this(chunks))
 	}
 	static removeOne(model , props) {
-		this.$
+		
 		return _connectionFactory().prepare('delete from '+model+_selectorFactory(props)).run().changes
 	}
 	static removeAll(model , props) {
-		this.$
-		return props.map(o => Model.removeOne(model,o) )
+		
+		return props.map(o => this.removeOne(model,o) )
 	}
 	static updateOne(model , props) {
-		this.$
 		return _connectionFactory().prepare(_parameterSqlFactory('u',model,props)).run(_stripKeysFactory(props)).changes
 	}
 	static updateAll(model , props) {
-		this.$
-		return props.map(o => Model.updateOne(model,o) )
+		
+		return props.map(o => this.updateOne(model,o) )
 	}
 	static createOne(model , props) {
-		this.$
 		return _connectionFactory().prepare(_parameterSqlFactory('c',model,props)).run(_stripKeysFactory(props)).lastInsertRowid
 	}
 	static createAll(model , props) {
-		this.$
-		return props.map(o => Model.createOne(model,o) )
+		
+		return props.map(o => this.createOne(model,o) )
 	}
 }
 

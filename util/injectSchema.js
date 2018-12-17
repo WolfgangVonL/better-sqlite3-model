@@ -16,4 +16,4 @@ const _injectEmptySchema = (model , obj) => {
 	return obj
 }
 
-module.exports _injectEmptySchema
+module.exports = _injectEmptySchema

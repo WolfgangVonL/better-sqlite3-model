@@ -5,7 +5,7 @@ const _poke = require('./util/poke.js')
 
 var relations = {
 	manyHasMany: [],
-	oneHasMany: []
+	oneHasMany: [],
 	oneHasOne: [],
 	hasOne: []
 }
@@ -90,6 +90,7 @@ const _removeRelationship = (from) => {
 const _link = (parent , child) => {
 	var ptable = parent.constructor.tableName
 	var ctable = child.constructor.tableName
+	console.log('debug link linking '+ptable+' to '+ctable)
 	relations.manyHasMany.map(r => {
 		if(r.from == ptable && r.to == ctable) {
 			var s = {}
@@ -187,13 +188,51 @@ const _unlink = (parent , child) => {
 	})
 }
 
-const _stripRelationships = (obj) => {
-	var table = obj.constructor.tableName
+const _saveChildren = (table , obj) => {
+	var save =[]
 	relations.manyHasMany.map(r => {
 		if(r.from == table) {
 			var childTable = r.to+'s'
 			if(obj[childTable]) {
-				obj[childTable].map(c => c.save)
+				obj[childTable].map(c => save.push(c))
+			}
+		}
+	})
+	relations.oneHasMany.map(r => {
+		if(r.from == table) {
+			var childTable = r.to+'s'
+			if(obj[childTable]) {
+				obj[childTable].map(c => save.push(c))
+			}
+		}
+	})
+	relations.oneHasOne.map(r => {
+		if(r.from == table) {
+			var childTable = r.to
+			if(obj[childTable]) {
+				save.push(obj[childTable])
+			}
+		}
+	})
+	relations.hasOne.map(r => {
+		if(r.from == table) {
+			var childTable = r.to
+			if(obj[childTable]) {
+				save.push(obj[childTable])
+			}
+		}
+	})	
+	save.map(s => {
+		s.save
+	})
+}
+
+const _stripRelationships = (table , obj) => {
+	var save =[]
+	relations.manyHasMany.map(r => {
+		if(r.from == table) {
+			var childTable = r.to+'s'
+			if(obj[childTable]) {
 				obj[childTable] = undefined
 				delete(obj[childTable])
 			}
@@ -203,7 +242,6 @@ const _stripRelationships = (obj) => {
 		if(r.from == table) {
 			var childTable = r.to+'s'
 			if(obj[childTable]) {
-				obj[childTable].map(c => c.save)
 				obj[childTable] = undefined
 				delete(obj[childTable])
 			}
@@ -213,7 +251,6 @@ const _stripRelationships = (obj) => {
 		if(r.from == table) {
 			var childTable = r.to
 			if(obj[childTable]) {
-				obj[childTable].save
 				obj[childTable] = undefined
 				delete(obj[childTable])
 			}
@@ -223,7 +260,7 @@ const _stripRelationships = (obj) => {
 		if(r.from == table) {
 			var childTable = r.to
 			if(obj[childTable]) {
-				obj[childTable].save
+				
 				obj[childTable] = obj[childTable].uuid
 			}
 		}
@@ -263,8 +300,13 @@ const _getRelationsGraph = (obj) => {
 	relations.hasOne.map(r => {
 		if(r.from == table) {
 			var childTable = r.to
-			var k = childTable
-			rel.hasOne[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').one()
+			if(obj[childTable]) {
+				if(typeof obj[childTable] == 'object') {
+					rel.hasOne[childTable] = obj[childTable].uuid
+				} else {
+					rel.hasOne[childTable] = obj[childTable]
+				}
+			}
 		}
 	})
 	return rel
@@ -277,7 +319,8 @@ module.exports = {
 	strip: _stripRelationships,
 	graph: _getRelationsGraph,
 	link: _link,
-	unlink: _unlink
+	unlink: _unlink,
+	saveChildren: _saveChildren
 
 }
 

@@ -7,7 +7,8 @@
     "test": "test/test-all.js"
   },
   "peerDependencies": {
-    "better-sqlite3": "^5.2.0"
+    "better-sqlite3": "^5.2.0",
+    "uuid": "^3.3.2"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,9 @@
   ],
   "author": "https://bitbucket.org/werlious",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/werlious/sqlite-model#readme"
+  "homepage": "https://bitbucket.org/werlious/sqlite-model#readme",
+  "devDependencies": {
+    "better-sqlite3": "^5.2.0",
+    "uuid": "^3.3.2"
+  }
 }
