@@ -270,6 +270,8 @@ const _stripRelationships = (table , obj) => {
 
 const _getRelationsGraph = (obj) => {
 	var table = obj.constructor.tableName
+	console.log('!!!@!@@!@ debug get relations graph called for ',table)
+	console.log(relations)
 	var rel = {
 		oneHasOne: {},
 		oneHasMany: {},

@@ -16,7 +16,7 @@ console.log('Database Connected...')
 console.log()
 
 // the Model class contains all methods needed except 'static get tableName' and 'static get jsonSchema' which 
-// are defined when your models extend the Model class. Model also contains some helper functions for dealing with better-sqlite3 directly
+// are defined when your models extend the Model class.
 //# const Model = sqlite_model.Model
 
 

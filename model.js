@@ -14,7 +14,6 @@ const _parameterSqlFactory = require('./util/parameterFactory.js')
 const _stripKeysFactory = require('./util/stripKeys.js')
 const _injectEmptySchema = require('./util/injectSchema.js')
 const _getSchemaUnique = require('./util/getUnique.js')
-const _moveUuidToBack = require('./util/moveUuid.js')
 const _sjsp = require('./util/sjsp.js').p
 const _sjss = require('./util/sjsp.js').s
 const _stripRelations = require('./relations.js').strip
@@ -45,7 +44,7 @@ class Model {
 	}
 	get $preCheckout() {
 		
-		this.uuid = uuid()
+		
 		if(!this.createdAt) {
 			this.createdAt = Date.now()
 		}
@@ -89,29 +88,23 @@ class Model {
 	}
 	get $preUpdate() {
 		
+		
 		var schema = this.constructor.jsonSchema
 		_saveChildren(this)
-		var dis = _disassociateObject(this)
 		
+		
+		var dis = _disassociateObject(this)
 		
 		
 		_checkRequired(schema , dis)
 		
 		
-		
 		_trimFromSchema(schema , dis)
-		
 		
 		
 		_checkType(schema , dis)
 		
 		
-		
-		_moveUuidToBack(dis)
-		
-		
-		
-
 		if(schema.json) {
 			schema.json.map(p => {
 				if(dis[p]) {
@@ -121,11 +114,8 @@ class Model {
 		}
 		
 		
-		
 		this.lastUpdated = Date.now()
-
 		dis = _stripRelations(this.constructor.tableName ,  dis)
-		
 		
 		
 		return dis
@@ -137,7 +127,10 @@ class Model {
 	get $loadChildren() {
 		
 		var relg = _loadRelations(this)
-		
+		console.log('#####$$$$$$$ debug model load children relationgraph')
+		console.log(relg)
+		console.log(this)
+		console.log()
 		
 		
 		//Process relationship graph
@@ -176,13 +169,16 @@ class Model {
 				this[childName] = cmodel.find({uuid: cuid})
 			})
 		} else if(relg.hasOne) {
+			console.log('++++++++++++++++++++++++ processing has one children for '+model.name)
 			_walk(relg.hasOne , (childName,rel) => {
 				if(!__tables[childName]) {
 					throw Error('Caanot load children: cannot lookup tablename')
 				}
 				var cmodel = __tables[childName]
 				var cuid = rel[childName]
-				this[childName] = cmodel.find({uuid: cuid})
+				if(typeof this[childName] == 'string') {
+					this[childName] = cmodel.find({uuid: cuid})
+				}
 			})
 		}
 	}
@@ -236,9 +232,9 @@ class Model {
 		if(this.name == 'Model') {
 			throw Error('You must extend Model to use find. Use findOne , findAll , or findEach instead')
 		}
-		console.log('debug model find findone results')
-		console.log(this.findOne(this.tableName , sel))
-		console.log()
+		
+		
+		
 		return this.findOne(this.tableName , sel)
 	}
 	static create(obj) {
@@ -269,7 +265,7 @@ class Model {
 	}
 
 
-
+	/////// find out why children children arent being loaded on model load
 
 	static checkout(model , props) {
 		
@@ -277,16 +273,11 @@ class Model {
 			throw Error('Cannot checkout '+model+': cannot lookup model name ')
 		}
 		var obj = new __tables[model](props)
+		obj.uuid = uuid()
 		if(obj.preCheckout) obj.preCheckout()
 		return _injectEmptySchema(__tables[model] , obj.$preCheckout)
 	}
 	static findOne(model,props) {
-		console.log('debug model findone results')
-		console.log(_connectionFactory().prepare('select * from '+model+_selectorFactory(props)).get())
-		console.log()
-		console.log('debug model findone sql')
-		console.log('select * from '+model+_selectorFactory(props))
-		console.log()
 		return new this(_connectionFactory().prepare('select * from '+model+_selectorFactory(props)).get())
 	}
 	static findAll(model,props) {
@@ -321,7 +312,13 @@ class Model {
 		return props.map(o => this.removeOne(model,o) )
 	}
 	static updateOne(model , props) {
-		return _connectionFactory().prepare(_parameterSqlFactory('u',model,props)).run(_stripKeysFactory(props)).changes
+		
+		
+		
+		
+		
+		
+		return _connectionFactory().prepare(_parameterSqlFactory('u',model,props)+' where uuid = "'+props.uuid+'"').run(_stripKeysFactory(props)).changes
 	}
 	static updateAll(model , props) {
 		

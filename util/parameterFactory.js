@@ -9,18 +9,11 @@ const _parameterFactory = (mode , model , props) => {
 		break;
 		case 'u':
 			var p = []
-			var w;
 			var sql = 'update '+model+' set '
-			var n = 0
 			for(var i in props) {
-				n++
-				if(n == Object.keys(props).length) {
-					w = ' where '+i+' = ?'
-				} else {
-					p.push(i+' = ?')
-				}
+				p.push(i+' = ?')
 			}
-			sql += p.join(' , ')+w
+			sql += p.join(' , ')
 			return sql
 		break;
 	}
