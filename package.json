@@ -1,0 +1,32 @@
+{
+  "name": "sqlite-model",
+  "version": "1.0.0",
+  "description": "A fast and simple model based orm wrapping JoshuaWise's better-sqlite",
+  "main": "index.js",
+  "scripts": {
+    "test": "test/test-all.js"
+  },
+  "peerDependencies": {
+    "better-sqlite3": "^5.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://werlious@bitbucket.org/werlious/sqlite-model.git",
+    "bugs": "https://bitbucket.org/werlious/sqlite-model/issues"
+  },
+  "keywords": [
+    "sqlite",
+    "sqlite3",
+    "better-sqlite",
+    "better-sqlite3",
+    "orm",
+    "object",
+    "relational",
+    "relation",
+    "map",
+    "mapping"
+  ],
+  "author": "https://bitbucket.org/werlious",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/werlious/sqlite-model#readme"
+}

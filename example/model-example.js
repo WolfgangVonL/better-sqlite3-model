@@ -1,19 +1,22 @@
+const Model = require('../index.js').Model
 
-
-class Gravatar extends Model{
+class Test extends Model {
+	// Only 'static get tableName' and 'static get jsonSchema' are required to be deifned 
+	// Methods can be added to models but beware adding variables to instances as this can lead to undefined results
 	static get tableName() {
-		return 'gravatar'
+		return 'test' //Tablename can be anything at all, but be sure to use the correct name in relationships, you can always use the child models static tableName for consistency
 	}
 	static get jsonSchema () {
 	    return {
-	      	type: 'gravatar',
-	      	required: ['name','path'],
-	      	index: ['name','path'],
-	      	json: [],
+	      	type: 'test',
+	      	required: ['name'],
+	      	index: ['name'],  // for best results index required fields
+	      	json: ['data' , 'arrayData'],
 		    properties: {
 		        name: {type: 'string' , unique: true , allowNull: false},
-		        path: {type: 'string' , unique: true , allowNull: false},
-		        active: {type: 'integer'},
+		        data: {type: 'object' , unique: true , allowNull: false}, 
+		        arrayData: {type: 'object' , unique: true , allowNull: false}, 
+		        /*     Relationship definitions
 		        manyHasMany: {
 		        	from: this.tableName,
 		        	to: 'manytomanytest'
@@ -26,20 +29,22 @@ class Gravatar extends Model{
 		        	from: this.tableName,
 		        	to: 'onetoonetest'
 		        },
+		        */
 		        hasOne: {
 		        	from: this.tableName,
-		        	to: 'hasonetest'
+		        	to: 'test'
 		        }
 	      	}
 	    }
 	}
 }
 
+module.exports = Test
 
 /*
 
 	example object:
-		Gravatar {
+		Test {
 			//handles
 			get save() saves object and children
 			get remove() removes object and associations
@@ -53,14 +58,19 @@ class Gravatar extends Model{
 			lastUpdated: 0
 			
 			//user defined
-			name:
-			path:
-			active:
+			name: ''
+			data: {}
+			arrayData: []
 
-			//linked objects
-			manytomanytest: []
-			onetomanytest: []
-			onetotonetest: {}
-			hasonetest: {}
+			//linked objects are added according to their table name and relationship
+				example - Test as a child
+					manyHasMany
+						tests: [Test , Test]
+					oneHasMany
+						tests: [Test , Test]
+					oneHasOne
+						test: Test
+					hasOne
+						test: Test
 		}
 */

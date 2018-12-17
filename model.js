@@ -178,7 +178,7 @@ class Model {
 	static find(sel) {
 		this.$
 		if(this.name == 'Model') {
-			throw Error('You must extend Model to use dispense. Use findOne , findAll , or findEach instead')
+			throw Error('You must extend Model to use find. Use findOne , findAll , or findEach instead')
 		}
 		return this.findOne(this.tableName , sel)
 	}
@@ -192,7 +192,7 @@ class Model {
 	static create(obj) {
 		this.$
 		if(this.name == 'Model') {
-			throw Error('You must extend Model to use dispense. Use createOne or createAll instead')
+			throw Error('You must extend Model to use create. Use createOne or createAll instead')
 		}
 		if(obj.preInsert) obj.preInsert()
 		this.createOne(this.tableName,obj.$preInsert)
@@ -201,7 +201,7 @@ class Model {
 	static save(obj) {
 		this.$
 		if(this.name == 'Model') {
-			throw Error('You must extend Model to use dispense. Use updateOne or updateAll instead')
+			throw Error('You must extend Model to use save. Use updateOne or updateAll instead')
 		}
 		if(_poke(this.tableName , _extractFrom(_getSchemaUnique(this) , obj)) == undefined) return this.create(obj)
 		if(obj.preUpdate) obj.preUpdate() 
@@ -211,7 +211,7 @@ class Model {
 	static remove(obj) {
 		this.$
 		if(this.name == 'Model') {
-			throw Error('You must extend Model to use dispense. Use removeOne or removeAll instead')
+			throw Error('You must extend Model to use remove. Use removeOne or removeAll instead')
 		}
 		if(obj.preRemove) obj.preRemove()
 		this.removeOne(this.tableName,obj.$preRemove)
