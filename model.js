@@ -270,7 +270,9 @@ class Model {
 		var o = new this(_connectionFactory().prepare('select * from '+model+_selectorFactory(props)).get())
 
 		o.$loadChildren
-
+		if(o.preLoad) {
+			o.preLoad()
+		}
 		return o
 	}
 	static findAll(model,props) {
@@ -278,6 +280,9 @@ class Model {
 		return _connectionFactory().prepare('select * from '+model+_selectorFactory(props)).all().map(r => {
 			var o = new this(r)
 			o.$loadChildren
+			if(o.preLoad) {
+				o.preLoad()
+			}
 			return o
 		})
 	}
@@ -285,6 +290,9 @@ class Model {
 		var load = r => {
 			var o = new this(r)
 			o.$loadChildren
+			if(o.preLoad) {
+				o.preLoad()
+			}
 			return o
 		}
 		var stmt = _connectionFactory().prepare('select * from '+model+_selectorFactory(props))

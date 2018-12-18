@@ -6,12 +6,11 @@ class Test extends Model {
 	static get tableName() {
 		return 'test' //Tablename can be anything at all, but be sure to use the correct name in relationships, you can always use the child models static tableName for consistency
 	}
-	// this is the schema that the table and relationships are built from. note, text keys need 
+	// this is the schema that the table and relationships are built from
 	static get jsonSchema () {
 	    return {
 	      	type: 'test', //on path to be deprecated, for now set as tableName
 	      	required: ['name'], // for best results add unique fields to required list
-	      	index: ['name'],  // for best results index required fields
 	      	json: ['data' , 'arrayData'],
 		    properties: {
 		        name: {type: 'string' , unique: true , allowNull: false},
