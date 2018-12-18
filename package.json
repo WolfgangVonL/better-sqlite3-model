@@ -27,7 +27,7 @@
     "map",
     "mapping"
   ],
-  "author": "https://bitbucket.org/werlious",
+  "author": "Werlious https://bitbucket.org/werlious",
   "license": "ISC",
   "homepage": "https://bitbucket.org/werlious/sqlite-model#readme",
   "devDependencies": {
