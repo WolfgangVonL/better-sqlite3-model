@@ -18,6 +18,8 @@
   "keywords": [
     "sqlite",
     "sqlite3",
+    "better-sqlite3-model",
+    "better-sqlite-model",
     "better-sqlite",
     "better-sqlite3",
     "orm",
