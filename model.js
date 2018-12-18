@@ -269,6 +269,19 @@ class Model {
 		if(obj.preCheckout) obj.preCheckout()
 		return _injectEmptySchema(__tables[model] , obj.$preCheckout)
 	}
+	static $find() {
+		if(this.name == 'Model') {
+			throw Error('You must extend Model to use create. Use createOne or createAll instead')
+		}
+		return _connectionFactory().prepare('select * from '+model).all().map(r => {
+			var o = new this(r)
+			o.$loadChildren
+			if(o.preLoad) {
+				o.preLoad()
+			}
+			return o
+		})		
+	}
 	static findOne(model,props) {
 
 		var o = new this(_connectionFactory().prepare('select * from '+model+_selectorFactory(props)).get())
