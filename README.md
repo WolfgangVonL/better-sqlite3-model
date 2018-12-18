@@ -1,8 +1,8 @@
 # sqlite-model
 
-A fast and simple model based orm wrapping JoshuaWise&#39;s `better-sqlite3`
+A fast and simple model based orm wrapping JoshuaWise's `better-sqlite3`
 
-### Checkout JoshuaWise&#39;s better-sqlite3 module [here](https://www.npmjs.com/package/better-sqlite3)
+### Checkout JoshuaWise's better-sqlite3 module [here](https://www.npmjs.com/package/better-sqlite3)
 
 This was built from the need for an orm, and not wanting to switch from sqlite3 and `better-sqlite3 (amazing package)`
 This was pulled from private projects and made public in the hopes of helping those on embedded systems or those who just prefer sqlite3
