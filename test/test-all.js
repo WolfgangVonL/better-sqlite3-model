@@ -33,9 +33,7 @@ console.log('Dispensed Test Object:')
 console.log(testObject)
 console.log()
 console.log()
-
 // objects are dispensed with a uuid, createdAt timestamp, and lastUpdated timestamp
-var anotherTestObject = TestModel.dispense()
 
 // objects are used as normal, and saved by triggering its 'get save()' function
 testObject.name = 'testing123'
@@ -48,10 +46,13 @@ console.log()
 
 // objects can also use json if the field is labelled as json in their jsonSchema
 // see the example model for details
+console.log('%%BP1-------------------------------------------------------')
+var anotherTestObject = TestModel.dispense()
 anotherTestObject.name = 'anotherTest'
 anotherTestObject.data = {testData: 'hello'}
 anotherTestObject.arraData = ['someData','someMoreData']
 anotherTestObject.save
+console.log('%%BP2-------------------------------------------------------')
 
 console.log('Other Test Object With Data')
 console.log(anotherTestObject)

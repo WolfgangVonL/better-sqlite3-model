@@ -90,7 +90,7 @@ const _removeRelationship = (from) => {
 const _link = (parent , child) => {
 	var ptable = parent.constructor.tableName
 	var ctable = child.constructor.tableName
-	console.log('debug link linking '+ptable+' to '+ctable)
+	
 	relations.manyHasMany.map(r => {
 		if(r.from == ptable && r.to == ctable) {
 			var s = {}
@@ -270,36 +270,40 @@ const _stripRelationships = (table , obj) => {
 
 const _getRelationsGraph = (obj) => {
 	var table = obj.constructor.tableName
-	console.log('!!!@!@@!@ debug get relations graph called for ',table)
-	console.log(relations)
+	
+
 	var rel = {
 		oneHasOne: {},
 		oneHasMany: {},
 		manyHasMany: {},
 		hasOne: {}
 	}
-	relations.manyHasMany.map(r => {
+	for(var i in relations.manyHasMany) {
+		var r = relations.manyHasMany[i]
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable+'s'
 			rel.manyHasMany[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').all()
 		}
-	})
-	relations.oneHasMany.map(r => {
+	}
+	for(var i in relations.oneHasMany) {
+		var r = relations.oneHasMany[i]
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable+'s'
 			rel.oneHasMany[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').all()
 		}
-	})
-	relations.oneHasOne.map(r => {
+	}
+	for(var i in relations.oneHasOne) {
+		var r = relations.oneHasOne[i]
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable
 			rel.oneHasOne[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').one()
 		}
-	})
-	relations.hasOne.map(r => {
+	}
+	for(var i in relations.hasOne) {
+		var r = relations.hasOne[i]
 		if(r.from == table) {
 			var childTable = r.to
 			if(obj[childTable]) {
@@ -310,7 +314,7 @@ const _getRelationsGraph = (obj) => {
 				}
 			}
 		}
-	})
+	}
 	return rel
 }
 
