@@ -1,4 +1,4 @@
-# sqlite-model
+# better-sqlite3-model
 
 A fast and simple model based orm wrapping JoshuaWise's `better-sqlite3`
 
