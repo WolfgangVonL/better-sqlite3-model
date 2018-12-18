@@ -1,7 +1,4 @@
-
-console.log('Starting test...')
-console.log()
-
+const Model = require('../index.js').Model
 // import the library
 const sqlite_model = require('../index.js')
 console.log('Library Imported...')
@@ -13,6 +10,30 @@ const Connector = sqlite_model.Connect
 Connector('test.db',{memory: true})
 
 console.log('Database Connected...')
+console.log()
+
+
+class AnotherTest extends Model {
+	// Only 'static get tableName' and 'static get jsonSchema' are required to be deifned 
+	// Methods can be added to models but beware adding variables to instances as this can lead to undefined results
+	static get tableName() {
+		return 'another_test' //Tablename can be anything at all, but be sure to use the correct name in relationships, you can always use the child models static tableName for consistency
+	}
+	static get jsonSchema () {
+	    return {
+	      	type: 'another_test', //on path to be deprecated, for now set as tableName
+	      	required: ['name'], // for best results add unique fields to required list
+	      	index: ['name'],  // for best results index required fields
+		    properties: {
+		        name: {type: 'string' , unique: true , allowNull: false},
+	      	}
+	    }
+	}
+}
+AnotherTest.$
+
+
+console.log('Starting test...')
 console.log()
 
 // the Model class contains all methods needed except 'static get tableName' and 'static get jsonSchema' which 
@@ -47,10 +68,10 @@ console.log()
 // objects can also use json if the field is labelled as json in their jsonSchema
 // see the example model for details
 console.log('%%BP1-------------------------------------------------------')
-var anotherTestObject = TestModel.dispense()
+var anotherTestObject = AnotherTest.dispense()
 anotherTestObject.name = 'anotherTest'
 anotherTestObject.data = {testData: 'hello'}
-anotherTestObject.arraData = ['someData','someMoreData']
+anotherTestObject.arrayData = ['someData','someMoreData']
 anotherTestObject.save
 console.log('%%BP2-------------------------------------------------------')
 
@@ -71,7 +92,7 @@ console.log()
 // you can get objects from the database by calling its models find method and passing in any required field
 // if the object has children they are loaded automatically
 testObject = TestModel.find({name: 'testing123'})
-anotherTestObject = TestModel.find({name: 'anotherTest'})
+anotherTestObject = AnotherTest.find({name: 'anotherTest'})
 
 console.log('Test Objects From Database:')
 console.log(testObject)

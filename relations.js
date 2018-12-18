@@ -122,6 +122,8 @@ const _link = (parent , child) => {
 			var s = {}
 			s[ptable] = parent.uuid
 			s[ctable] = child.uuid
+			console.log('debug link sql ')
+			console.log('insert into '+r.from+'_'+r.to+' ( '+ptable+' , '+ctable+' ) values ( "'+parent.uuid+'" , "'+child.uuid+'" )')
 			if(!_poke(r.from+'_'+r.to , s)) {
 				_connectionFactory().prepare('insert into '+r.from+'_'+r.to+' ( '+ptable+' , '+ctable+' ) values ( "'+parent.uuid+'" , "'+child.uuid+'" )').run()
 			} else {
@@ -283,7 +285,11 @@ const _getRelationsGraph = (obj) => {
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable+'s'
-			rel.manyHasMany[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').all()
+			rel.manyHasMany[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').all().map(c => {
+				if(c[childTable]) {
+					return c[childTable]
+				}
+			})
 		}
 	}
 	for(var i in relations.oneHasMany) {
@@ -291,16 +297,37 @@ const _getRelationsGraph = (obj) => {
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable+'s'
-			rel.oneHasMany[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').all()
+			rel.oneHasMany[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').all().map(c => {
+				if(c[childTable]) {
+					return c[childTable]
+				}
+			})
 		}
 	}
 	for(var i in relations.oneHasOne) {
+		
+		
+		
+		
 		var r = relations.oneHasOne[i]
+		
+		
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable
-			rel.oneHasOne[k] = _connectionFactory().prepare('select * from '+table+'_'+childTable+' where '+table+' = "'+obj.uuid+'"').one()
+			console.log('debug relations graph child table')
+			console.log(k)
+			console.log('debug relations graph sql')
+			console.log('select * from '+table+'_'+k+' where '+table+' = "'+obj.uuid+'"')
+			var ro = _connectionFactory().prepare('select * from '+table+'_'+k+' where '+table+' = "'+obj.uuid+'"').get()
+			if(ro) {
+				rel.oneHasOne[k] = ro[k]
+			} else {
+				rel.oneHasOne[k] = {}
+			}
 		}
+		
+		
 	}
 	for(var i in relations.hasOne) {
 		var r = relations.hasOne[i]

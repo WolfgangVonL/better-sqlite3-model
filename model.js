@@ -90,12 +90,10 @@ class Model {
 	get $preUpdate() {
 		var schema = this.constructor.jsonSchema
 		_saveChildren(this)
-
 		var dis = _disassociateObject(this)
 		_checkRequired(schema , dis)
 		_trimFromSchema(schema , dis)
 		_checkType(schema , dis)
-
 		if(schema.json) {
 			schema.json.map(p => {
 				if(dis[p]) {
@@ -130,22 +128,26 @@ class Model {
 					throw Error('Caanot load children: cannot lookup tablename')
 				}
 				var cmodel = __tables[childName.slice(0,-1)]
-				this[childName] = []
+				this[childName.slice(0,-1)] = []
 				rels.map(r => {
 					var cuid = r[childName]
-					this[childName].push(cmodel.find({uuid: cuid}))
+					this[childName.slice(0,-1)].push(cmodel.find({uuid: cuid}))
 				})
 			}
 			for(var childName in relg.oneHasMany) {
 				var rels = relg.oneHasMany[childName]
-				if(!__tables[childName]) {
+				console.log('debug loadchildren child table name')
+				console.log(childName.slice(0,-1))
+				console.log('debug loadchildren __tables')
+				console.log(__tables)
+				if(!__tables[childName.slice(0,-1)]) {
 					throw Error('Caanot load children: cannot lookup tablename')
 				}
 				var cmodel = __tables[childName.slice(0,-1)]
-				this[childName] = []
+				this[childName.slice(0,-1)] = []
 				rels.map(r => {
 					var cuid = r[childName]
-					this[childName].push(cmodel.find({uuid: cuid}))
+					this[childName.slice(0,-1)].push(cmodel.find({uuid: cuid}))
 				})
 			}
 			for(var childName in relg.oneHasOne) {
@@ -153,6 +155,11 @@ class Model {
 				if(!__tables[childName]) {
 					throw Error('Caanot load children: cannot lookup tablename')
 				}
+				console.log('debug loadchildren child name')
+				console.log(childName)
+				console.log('debug loadchildren relationgraph')
+				console.log(rels)
+				
 				var cmodel = __tables[childName]
 				var cuid = rels[childName]
 				this[childName] = cmodel.find({uuid: cuid})

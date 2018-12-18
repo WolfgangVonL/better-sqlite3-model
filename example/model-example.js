@@ -6,9 +6,10 @@ class Test extends Model {
 	static get tableName() {
 		return 'test' //Tablename can be anything at all, but be sure to use the correct name in relationships, you can always use the child models static tableName for consistency
 	}
+	// this is the schema that the table and relationships are built from. note, text keys need 
 	static get jsonSchema () {
 	    return {
-	      	type: 'test',
+	      	type: 'test', //on path to be deprecated, for now set as tableName
 	      	required: ['name'], // for best results add unique fields to required list
 	      	index: ['name'],  // for best results index required fields
 	      	json: ['data' , 'arrayData'],
@@ -16,26 +17,26 @@ class Test extends Model {
 		        name: {type: 'string' , unique: true , allowNull: false},
 		        data: {type: 'object'}, 
 		        arrayData: {type: 'object'}, 
-		        /*     Relationship definitions
+		        /*    Relationship definitions
 		        manyHasMany: {
 		        	from: this.tableName,
-		        	to: 'manytomanytest'
+		        	to: 'another_test'
 		        },
 		        oneHasMany: {
 		        	from: this.tableName,
-		        	to: 'onetomanytest'
+		        	to: 'another_test'
 		        },
 		        oneHasOne: {
 		        	from: this.tableName,
-		        	to: 'onetoonetest'
+		        	to: 'another_test'
 		        },
-		        */
 		        test: {    // this is a hasOne relationship with the Test class. 
 		        		   // key must match 'from'
 		        	hasOne: {
-		        		from: 'test'
+		        		from: 'another_test'
 		        	}
 		        }
+		        */
 	      	}
 	    }
 	}

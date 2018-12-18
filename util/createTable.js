@@ -14,21 +14,21 @@ const _createTableFactory = (model , props) => {
 		if(i == 'manyHasMany') {
 			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
 			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
-			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid)'
+			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid))'
 			_createRelationship(p.from , p.to , {manyHasMany:true})
 			rel.push(rels)
 			continue
 		} else if(i == 'oneHasMany') {
 			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
 			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
-			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid)'
+			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid))'
 			_createRelationship(p.from , p.to , {oneHasMany:true})
 			rel.push(rels)
 			continue
 		} else if(i == 'oneHasOne') {
 			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
 			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
-			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid)'
+			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid))'
 			_createRelationship(p.from , p.to , {oneHasOne:true})
 			rel.push(rels)
 			continue
@@ -54,7 +54,9 @@ const _createTableFactory = (model , props) => {
 	
 	
 	_connectionFactory().exec(sql)
-	rel.map(r => _connectionFactory().exec(r) )
+	rel.map(r => {
+		_connectionFactory().exec(r) 
+	})
 }
 
 module.exports = _createTableFactory
