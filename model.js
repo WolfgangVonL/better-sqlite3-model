@@ -218,12 +218,16 @@ class Model {
 		}
 		return this.checkout(this.tableName , props)
 	}
-	static find(sel) {
+	static find(sel , all = false) {
 
 		if(this.name == 'Model') {
 			throw Error('You must extend Model to use find. Use findOne , findAll , or findEach instead')
 		}
-		return this.findOne(this.tableName , sel)
+		if(all) {
+			return this.findAll(this.tableName , sel)
+		} else {
+			return this.findOne(this.tableName , sel)
+		}
 	}
 	static create(obj) {
 
