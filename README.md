@@ -17,7 +17,7 @@ This was pulled from private projects and made public in the hopes of helping th
 
 #### Connect to a database
 
-```
+```javascript
 const Connect = require('better-sqlite3-model').Connect
 // the connect function connects to a database file and caches the connection for the orm
 // the database can be switched at any time but models will have to be re-initialized after
@@ -49,26 +49,19 @@ class ExampleModel extends Model {
 				someData: {type: 'object'},
 				someArrayData: {type: 'array'},
 				// relationships are defined as follows:
-				// manyHasMany - loads children and adds them to instance as an array indexed by the 'to' field with a 's' added. e.g. example_models
-				manyHasMany: {
-					from: this.tableName, // the from field will be used for complex relationships in future versions, but is required for now for future-proofing
-					to: SomeOtherModel.tableName
-				},
-				//oneHasMany - similar to manyHasMany
-				oneHasMany: {
-					from: this.tableName,
-					to: SomeOtherModel.tableName
-				},
-				// oneHasOne - allows only one of this type of child to be linked, added to the object without array and added 's'
-				oneHasOne: {
-					from: this.tableName,
-					to: SomeOtherModel.tableName
-				},
-				// hasOne - similar to oneHasOne, but instead of using a lookup table for the child, the childs uuid is stored on the parent in the database,
-				// and the child is loaded and added  to the parent on parent load
-				hasOne: {
-					from: SomeOtherModel.tableName // hasOne only requires the 'from' prop, which is the childs tableName
+				aRelationship: {
+					manyHasMany: SomeOtherModel.tableName
 				}
+				// A relaship can be one of manyHasMany , oneHasMany , oneHasOne , hasOne
+				// - note that the name of the field does not affect the name given to the property on an object. They will be merged according to below:
+
+				// manyHasMany - loads children and adds them to instance as an array as the childs tableName with a 's' added. e.g. example_models
+				// oneHasMany - similar to manyHasMany
+				// oneHasOne - allows only one of this type of child to be linked, adding an object instead of an array and no 's' appended to the tableName
+				// hasOne - similar to oneHasOne, but instead of using a lookup table for the child, the childs uuid is stored on the parent in the database,
+				//        - and the child is loaded and added  to the parent on parent load
+
+				// also note that if multiple relationships arre found in a property, the highest one on the list above takes precedence
 			}
 		}
 	}
@@ -78,7 +71,7 @@ class ExampleModel extends Model {
 ---
 
 #### Models are initialized by getting thier dollar sign method
-```
+```javascript
 ExampleModel.$
 ```
 
@@ -87,7 +80,7 @@ ExampleModel.$
 #### Instances are created by calling a models `dispense` function, optionally passing any initial data for the instance
 ##### instances can be considered regular objects. Any props or functions can be added as long as they dont conflict with the base model
 ##### and they will be stripped when added to the database. note that added props and functions are not added back on database load
-```
+```javascript
 var instance = ExampleModel.dispense()
 ```
 #### Instances can be saved and removed by using `instance.save` and `instance.remove` respectively. _Note the lack of parenthesis_
@@ -95,17 +88,17 @@ var instance = ExampleModel.dispense()
 ----
 
 #### Instances can be loaded from the database by calling thier models `find` function, passing any selectors
-```
+```javascript
 var loadedInstance = ExampleModel.find({name: 'example' , uuid: 'hghuhgshthkjhtw4-45234523c46-45c24636c2'})
 ```
 ---
 
 #### Instances can be linked (if a relationship is defined)
-```
+```javascript
 instance.link = loadedInstance
 ```
 #### and unlinked
-```
+```javascript
 instance.unlink = loadedInstance
 ```
 ##### This is done using setter methods, so set link or unlink to the object you want to link/unlink to/from
@@ -114,7 +107,7 @@ instance.unlink = loadedInstance
 
 #### Models can hook into slots provided by the base model
 ##### This can be useful if a boolean field is needed
-```
+```javascript
 class ExampleModel extends Model {
 	...
 	preInsert() {

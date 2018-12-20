@@ -16,24 +16,25 @@ class Test extends Model {
 		        name: {type: 'string' , unique: true , allowNull: false},
 		        data: {type: 'object'}, 
 		        arrayData: {type: 'object'}, 
-		        /*    Relationship definitions
-		        manyHasMany: {
-		        	from: this.tableName,
-		        	to: 'another_test'
+		        /*    Relationship definitions - note that the property name has no impact on how the child(ren) are merged into the object.
+		        							   - Children will always be merged according to thier classes tableName 
+		        							   - if a property has a relationship field, it will not accept any other props, and if multiple 
+		        							   - relationships are found, the relationship will be the first one encountered on this list:
+		        							   			- manyHasMany
+		        							   			- oneHasMany
+		        							   			- oneHasOne
+		        							   			- hasOne
+		        atest: {
+					manyHasMany: 'another_test'
 		        },
-		        oneHasMany: {
-		        	from: this.tableName,
-		        	to: 'another_test'
+		        btest: {
+					oneHasMany: 'another_test'
 		        },
-		        oneHasOne: {
-		        	from: this.tableName,
-		        	to: 'another_test'
+		        ctest: {
+					oneHasOne: 'another_test'
 		        },
-		        test: {    // this is a hasOne relationship with the Test class. 
-		        		   // key must match 'from'
-		        	hasOne: {
-		        		from: 'another_test'
-		        	}
+		        dtest: {
+					hasOne: 'another_test'
 		        }
 		        */
 	      	}

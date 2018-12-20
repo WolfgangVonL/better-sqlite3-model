@@ -122,8 +122,6 @@ const _link = (parent , child) => {
 			var s = {}
 			s[ptable] = parent.uuid
 			s[ctable] = child.uuid
-			console.log('debug link sql ')
-			console.log('insert into '+r.from+'_'+r.to+' ( '+ptable+' , '+ctable+' ) values ( "'+parent.uuid+'" , "'+child.uuid+'" )')
 			if(!_poke(r.from+'_'+r.to , s)) {
 				_connectionFactory().prepare('insert into '+r.from+'_'+r.to+' ( '+ptable+' , '+ctable+' ) values ( "'+parent.uuid+'" , "'+child.uuid+'" )').run()
 			} else {
@@ -315,10 +313,6 @@ const _getRelationsGraph = (obj) => {
 		if(r.from == table) {
 			var childTable = r.to
 			var k = childTable
-			console.log('debug relations graph child table')
-			console.log(k)
-			console.log('debug relations graph sql')
-			console.log('select * from '+table+'_'+k+' where '+table+' = "'+obj.uuid+'"')
 			var ro = _connectionFactory().prepare('select * from '+table+'_'+k+' where '+table+' = "'+obj.uuid+'"').get()
 			if(ro) {
 				rel.oneHasOne[k] = ro[k]

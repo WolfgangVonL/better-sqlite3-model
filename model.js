@@ -112,14 +112,7 @@ class Model {
 		return {uuid: this.uuid}
 	}
 	get $loadChildren() {
-
-		//
-		//
 		var relg = _loadRelations(this)
-		//
-		//
-		//
-		//Process relationship graph
 		var model = this.constructor
 
 			for(var childName in relg.manyHasMany) {
@@ -136,10 +129,6 @@ class Model {
 			}
 			for(var childName in relg.oneHasMany) {
 				var rels = relg.oneHasMany[childName]
-				console.log('debug loadchildren child table name')
-				console.log(childName.slice(0,-1))
-				console.log('debug loadchildren __tables')
-				console.log(__tables)
 				if(!__tables[childName.slice(0,-1)]) {
 					throw Error('Caanot load children: cannot lookup tablename')
 				}
@@ -155,11 +144,6 @@ class Model {
 				if(!__tables[childName]) {
 					throw Error('Caanot load children: cannot lookup tablename')
 				}
-				console.log('debug loadchildren child name')
-				console.log(childName)
-				console.log('debug loadchildren relationgraph')
-				console.log(rels)
-				
 				var cmodel = __tables[childName]
 				var cuid = rels[childName]
 				this[childName] = cmodel.find({uuid: cuid})
@@ -255,9 +239,6 @@ class Model {
 		if(obj.preRemove) obj.preRemove()
 		this.removeOne(this.tableName,obj.$preRemove)
 	}
-
-	//////// modify relations to use for loops instead of maps
-	/////// find out why children children arent being loaded on model load
 
 	static checkout(model , props) {
 

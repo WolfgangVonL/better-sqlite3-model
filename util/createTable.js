@@ -10,34 +10,31 @@ const _createTableFactory = (model , props) => {
 		var p = props[i]
 		
 		
-		
-		if(i == 'manyHasMany') {
-			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
-			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
-			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid))'
-			_createRelationship(p.from , p.to , {manyHasMany:true})
+		if(p.manyHasMany) {
+			var rels = 'create table if not exists '+model+'_'+p.manyHasMany+' ( id integer primary key , '+model+' text , '+p.manyHasMany+' text ,'
+			rels += ' foreign key ('+model+') references '+model+'(uuid) ,'
+			rels += ' foreign key ('+p.manyHasMany+') references '+p.manyHasMany+'(uuid))'
+			_createRelationship(model , p.manyHasMany , {manyHasMany:true})
 			rel.push(rels)
 			continue
-		} else if(i == 'oneHasMany') {
-			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
-			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
-			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid))'
-			_createRelationship(p.from , p.to , {oneHasMany:true})
+		} else if(p.oneHasMany) {
+		 	var rels = 'create table if not exists '+model+'_'+p.oneHasMany+' ( id integer primary key , '+model+' text , '+p.oneHasMany+' text ,'
+			rels += ' foreign key ('+model+') references '+model+'(uuid) ,'
+			rels += ' foreign key ('+p.oneHasMany+') references '+p.oneHasMany+'(uuid))'
+			_createRelationship(model , p.oneHasMany , {oneHasMany:true})
 			rel.push(rels)
 			continue
-		} else if(i == 'oneHasOne') {
-			var rels = 'create table if not exists '+p.from+'_'+p.to+' ( id integer primary key , '+p.from+' text , '+p.to+' text ,'
-			rels += ' foreign key ('+p.from+') references '+p.from+'(uuid) ,'
-			rels += ' foreign key ('+p.to+') references '+p.to+'(uuid))'
-			_createRelationship(p.from , p.to , {oneHasOne:true})
+		} else if(p.oneHasOne) {
+			var rels = 'create table if not exists '+model+'_'+p.oneHasOne+' ( id integer primary key , '+model+' text , '+p.oneHasOne+' text ,'
+			rels += ' foreign key ('+model+') references '+model+'(uuid) ,'
+			rels += ' foreign key ('+p.oneHasOne+') references '+p.oneHasOne+'(uuid))'
+			_createRelationship(model , p.oneHasOne , {oneHasOne:true})
 			rel.push(rels)
 			continue
-		}
-		if(p.hasOne) {
-			
-			d = i+' text , foreign key ('+i+') references '+p.hasOne.from+'(uuid)'
+		} else if(p.hasOne) {
+			d = i+' text , foreign key ('+i+') references '+p.hasOne+'(uuid)'
 			j.push(d)
-			_createRelationship(model , p.hasOne.from , {hasOne:true})
+			_createRelationship(model , p.hasOne , {hasOne:true})
 			continue
 		}
 		var d = ''
