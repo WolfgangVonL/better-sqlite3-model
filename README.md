@@ -1,9 +1,11 @@
 # better-sqlite3-model
-
+---
 #### Quick Note - I honestly did not expect more than a few people to download this, so I must clarify
 #### that this is an active work in progress and will be updated frequently. This is a public version of in house software, 
 #### so we will be updating as we find and patch bugs, and improve efficiency. We are open to public suggestions and forks.
 #### Email for suggestions: stone.info.labs@gmail.com
+---
+---
 
 A fast and simple model based orm wrapping JoshuaWise's `better-sqlite3`
 
