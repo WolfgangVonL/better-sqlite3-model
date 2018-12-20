@@ -29,6 +29,7 @@ const Connect = require('better-sqlite3-model').Connect
 // the connect function connects to a database file and caches the connection for the orm
 // the database can be switched at any time but models will have to be re-initialized after
 // the function is a wrapper for 'better-sqlite3's Database contructor and takes the same props
+// the function returns a better-sqlite3 Database object. Calling without props will return the last connection used
 Connect(path,options)
 ```
 
