@@ -3,7 +3,7 @@ const _walk = require('./walk.js')
 const _checkRequired = (schema , obj) => {
 	_walk(schema.required , (i,v) => {
 		if(!obj[v]) {
-			if(!schema.properties[i].unique) {
+			if(schema.properties[i] && !schema.properties[i].unique) {
 				switch(schema.properties[i].type) {
 					case 'string': obj[i] = ''
 						break;
