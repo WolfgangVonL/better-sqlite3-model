@@ -42,6 +42,7 @@ class Model {
 		this.$preLoad
 	}
 	get $preCheckout() {
+		this.uuid = uuid()
 		if(!this.createdAt) {
 			this.createdAt = Date.now()
 		}
@@ -243,7 +244,6 @@ class Model {
 			throw Error('Cannot checkout '+model+': cannot lookup model name ')
 		}
 		var obj = new __tables[model](props)
-		obj.uuid = uuid()
 		if(obj.preCheckout) obj.preCheckout()
 		return _injectEmptySchema(__tables[model] , obj.$preCheckout)
 	}
