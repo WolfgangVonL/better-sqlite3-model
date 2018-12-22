@@ -47,9 +47,6 @@ class ExampleModel extends Model {
 	static get jsonSchema() { // this defines how the model looks
 		// the model is already provided with an id field, and a uuid, createdAt, and lastUpdated fields are added to objects automatically 
 		return {
-			type: this.tableName, // this field is required but soon to be deprecated
-			required: ['name','someData'], // an array of required fields that an object must have before it can be saved
-			index: [], //this is experimental and far from ready but is an array of fields to index in a dedicated index table for faster lookups
 			json: ['someData','someArrayData'], // this is an array of fields that will be passed through JSON.parse and JSON.stringify on save and load, respectively
 			properties: { // this is where the models instance properties and types are declared
 				aStringProperty: {type: 'string' , unique: true , allowNull: false},

@@ -1,6 +1,6 @@
 {
   "name": "better-sqlite3-model",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "A fast and simple model based orm wrapping JoshuaWise's better-sqlite",
   "main": "index.js",
   "scripts": {

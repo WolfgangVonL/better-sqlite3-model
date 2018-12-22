@@ -4,7 +4,6 @@ const uuid = require('uuid/v4')
 const _disassociateObject = require('./util/disassociate.js')
 const _init = require('./util/initModel.js')
 const _poke = require('./util/poke.js')
-const _checkRequired = require('./util/checkRequired.js')
 const _checkType = require('./util/checkType.js')
 const _connectionFactory = require('./connect.js')
 const _extractFrom = require('./util/extract.js')
@@ -74,7 +73,6 @@ class Model {
 		var schema = this.constructor.jsonSchema
 		_saveChildren(this)
 		var dis = _disassociateObject(this)
-		_checkRequired(schema , dis)
 		_trimFromSchema(schema , dis)
 		_checkType(schema , dis)
 		if(schema.json) {
@@ -91,7 +89,6 @@ class Model {
 		var schema = this.constructor.jsonSchema
 		_saveChildren(this)
 		var dis = _disassociateObject(this)
-		_checkRequired(schema , dis)
 		_trimFromSchema(schema , dis)
 		_checkType(schema , dis)
 		if(schema.json) {

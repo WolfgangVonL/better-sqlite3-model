@@ -9,8 +9,6 @@ class Test extends Model {
 	// this is the schema that the table and relationships are built from
 	static get jsonSchema () {
 	    return {
-	      	type: 'test', //on path to be deprecated, for now set as tableName
-	      	required: ['name'], // for best results add unique fields to required list
 	      	json: ['data' , 'arrayData'],
 		    properties: {
 		        name: {type: 'string' , unique: true , allowNull: false},
