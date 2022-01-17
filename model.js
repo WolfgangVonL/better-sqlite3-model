@@ -1,5 +1,5 @@
 
-const uuid = require('uuid/v4')
+const uuid = require('uuid')
 
 const _disassociateObject = require('./util/disassociate.js')
 const _init = require('./util/initModel.js')
